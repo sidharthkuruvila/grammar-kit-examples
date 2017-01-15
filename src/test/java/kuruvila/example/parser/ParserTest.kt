@@ -16,6 +16,14 @@ class ParserTest: ParsingTestCase("testdata/parser", "example", ExampleParserDef
         doTest(true)
     }
 
+    fun testLeftAssociativeRecursiveExpression(){
+        doTest(true)
+    }
+
+    fun testRightAssociativeRecursiveExpression(){
+        doTest(true)
+    }
+
     override fun getTestDataPath(): String {
         return "src/test/resources";
     }

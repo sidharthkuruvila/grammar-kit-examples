@@ -1,0 +1,7 @@
+/*
+The tree  for a right associatie recursive expression
+will have the form (COLONCOLON a (COLONCOLON b c))
+*/
+recursive_expression {
+    a :: b :: c
+}

@@ -16,6 +16,7 @@
     LIDENT = "LIDENT"
     PLUS = "+"
     MINUS = "-"
+    COLONCOLON = "::"
     OPEN_CURLY = "{"
     CLOSE_CURLY = "}"
     AND = "and"
@@ -36,7 +37,7 @@
    *
    * TODO How does the extends clause allow left recursion
    */
-  extends("OrExpression|AddExpression|IdentifierExpression|RecursiveExpression")=RecursiveExpression
+  extends("OrExpression|AddExpression|IdentifierExpression|RecursiveExpression|ConsExpression")=RecursiveExpression
 
 }
 
@@ -55,6 +56,7 @@ PoorAdditionExpression ::= LIDENT ((PLUS | MINUS) PoorAdditionExpression) ?
 
 /**
  * RecursiveExpressionExample
+ * The expressions defult to left associativity.
  */
 
 RecursiveExpressionExample ::= RECURSIVE_EXPRESSION_KEYWORD OPEN_CURLY RecursiveExpression CLOSE_CURLY
@@ -62,6 +64,7 @@ RecursiveExpressionExample ::= RECURSIVE_EXPRESSION_KEYWORD OPEN_CURLY Recursive
 RecursiveExpression ::=
      OrExpression
    | AddExpression
+   | ConsExpression
    | IdentifierExpression
 
 IdentifierExpression ::= LIDENT
@@ -72,3 +75,11 @@ OrExpression ::=
 
 AddExpression ::=
     RecursiveExpression (PLUS | MINUS) RecursiveExpression
+
+/*
+ * To make a sub expression right associative set the flag
+ * rightAssociative to true
+ */
+
+ConsExpression ::=
+    RecursiveExpression COLONCOLON RecursiveExpression { rightAssociative = true }

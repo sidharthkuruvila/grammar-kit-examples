@@ -1,0 +1,8 @@
+/*
+Recursive expressions are left associative.
+
+The tree will have the form (PLUS (PLUS a b) c)
+*/
+recursive_expression {
+    a + b + c
+}

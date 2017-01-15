@@ -65,6 +65,7 @@ IDENTCHAR=[A-Za-z_0-9']
 
         { LOWERCASE } { IDENTCHAR }  * { return LIDENT; }
 
+        "::" { return COLONCOLON; }
         "+" { return PLUS; }
         "-" { return MINUS; }
         "{" { return OPEN_CURLY; }
