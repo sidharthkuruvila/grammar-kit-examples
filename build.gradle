@@ -1,0 +1,85 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev/' }
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+    dependencies {
+        classpath group: 'org.jetbrains.intellij.plugins', name: 'gradle-intellij-plugin', version: '0.2.0-SNAPSHOT'
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: '1.0.6'
+    }
+}
+
+plugins {
+    id "org.jetbrains.intellij" version "0.0.42"
+}
+
+apply plugin: 'kotlin'
+
+group 'kuruvila.example'
+version '0.0.1-SNAPSHOT'
+
+
+sourceSets {
+    main.java.srcDirs += "gen"
+}
+
+
+configurations {
+    gen
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.8.4'
+    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+
+    gen group: 'de.jflex', name: 'jflex', version: '1.6.0'
+    gen files('lib/gk/grammar-kit-patched.jar')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+//Copied from the rust plugin
+
+def jflexArgs(srcFlex, targetDir) {
+    return ["--skel", "parser/Lexer.skeleton",
+            "-d", targetDir,
+            srcFlex
+    ]
+}
+
+
+task generateLexer(type: JavaExec) {
+    ext.src = "parser/Lexer.flex"
+    ext.dst = "gen/kuruvila/example/lexer/"
+
+    main = "jflex.Main"
+
+    args = jflexArgs(src, dst)
+
+    inputs.file file(src)
+    outputs.dir file(dst + "_ExampleLexer.java")
+
+    classpath configurations.gen
+}
+
+
+
+task generatePsiAndParser(type: JavaExec) {
+    ext.src = "parser/ExampleParser.bnf"
+    ext.dstRoot = "gen"
+
+    main = "org.intellij.grammar.Main"
+
+    args = [dstRoot, file(src)]
+
+    inputs.file file(src)
+    outputs.dir fileTree(dir: dstRoot + '/kuruvila/example/parser/', include: '**/*.java')
+
+    classpath configurations.gen
+}

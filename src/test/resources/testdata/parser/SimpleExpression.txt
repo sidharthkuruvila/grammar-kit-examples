@@ -1,0 +1,10 @@
+FILE
+  ExampleSimpleExpressionExampleImpl(SIMPLE_EXPRESSION_EXAMPLE)
+    PsiElement(simple_expression)('simple_expression')
+    PsiWhiteSpace(' ')
+    PsiElement({)('{')
+    PsiWhiteSpace('\n    ')
+    ExampleSimpleExpressionImpl(SIMPLE_EXPRESSION)
+      PsiElement(LIDENT)('hello')
+    PsiWhiteSpace('\n')
+    PsiElement(})('}')

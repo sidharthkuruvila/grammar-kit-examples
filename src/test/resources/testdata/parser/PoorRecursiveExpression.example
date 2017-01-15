@@ -1,0 +1,3 @@
+poor_recursive_expression {
+    a and b + c - b and g + e
+}

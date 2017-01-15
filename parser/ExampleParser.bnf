@@ -1,0 +1,74 @@
+{
+  parserClass='kuruvila.example.parser.ExampleParser'
+  psiClassPrefix='Example'
+  psiImplClassSuffix='Impl'
+  psiPackage='kuruvila.example.parser.psi'
+  psiImplPackage='kuruvila.example.parser.psi.impl'
+
+  elementTypeHolderClass='kuruvila.example.ExampleTypes'
+
+  //To avoid a NullPointerExeption
+  //tokenTypeClass='kuruvila.example.parser.ExampleTokenType'
+  elementTypeClass='kuruvila.example.parser.ExampleCompositeElementType'
+
+  tokens = [
+    WHITESPACE = "WHITE_SPACE"
+    LIDENT = "LIDENT"
+    PLUS = "+"
+    MINUS = "-"
+    OPEN_CURLY = "{"
+    CLOSE_CURLY = "}"
+    AND = "and"
+    OR = "or"
+    STRING = "string"
+    COMMENT = "comment"
+    SIMPLE_EXPRESSION_KEYWORD = "simple_expression"
+    POOR_RECURSIVE_EXPRESSION_KEYWORD = "poor_recursive_expression"
+    RECURSIVE_EXPRESSION_KEYWORD = "recursive_expression"
+  ]
+
+  /**
+   * RecursiveExpressionExample
+   *
+   * The extends clause signals that sub productions can support both left and right recursion
+   * The expressions affected by the extends clause are left associative and a flag needs to
+   * be used to inform the parser to make an expression right associative.
+   *
+   * TODO How does the extends clause allow left recursion
+   */
+  extends("OrExpression|AddExpression|IdentifierExpression|RecursiveExpression")=RecursiveExpression
+
+}
+
+
+Examples ::= COMMENT? (SimpleExpressionExample |  PoorRecursiveExpressionExample | RecursiveExpressionExample)
+
+SimpleExpressionExample ::= SIMPLE_EXPRESSION_KEYWORD OPEN_CURLY SimpleExpression CLOSE_CURLY
+
+SimpleExpression ::= LIDENT
+
+PoorRecursiveExpressionExample ::= POOR_RECURSIVE_EXPRESSION_KEYWORD OPEN_CURLY PoorBooleanExpression CLOSE_CURLY
+
+PoorBooleanExpression ::= PoorAdditionExpression ((AND|OR) PoorBooleanExpression) ?
+
+PoorAdditionExpression ::= LIDENT ((PLUS | MINUS) PoorAdditionExpression) ?
+
+/**
+ * RecursiveExpressionExample
+ */
+
+RecursiveExpressionExample ::= RECURSIVE_EXPRESSION_KEYWORD OPEN_CURLY RecursiveExpression CLOSE_CURLY
+
+RecursiveExpression ::=
+     OrExpression
+   | AddExpression
+   | IdentifierExpression
+
+IdentifierExpression ::= LIDENT
+
+
+OrExpression ::=
+    RecursiveExpression (AND | OR) RecursiveExpression
+
+AddExpression ::=
+    RecursiveExpression (PLUS | MINUS) RecursiveExpression

@@ -1,0 +1,7 @@
+/*
+'and' has a lower precedence than '+' so appears
+as a root node for the the plus expressions
+*/
+recursive_expression {
+    a + b and c + d
+}
