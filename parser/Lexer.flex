@@ -59,9 +59,15 @@ IDENTCHAR=[A-Za-z_0-9']
         "simple_expression" { return SIMPLE_EXPRESSION_KEYWORD; }
         "poor_recursive_expression" { return POOR_RECURSIVE_EXPRESSION_KEYWORD; }
         "recursive_expression" { return RECURSIVE_EXPRESSION_KEYWORD; }
+        "private_rule" { return PRIVATE_RULE_KEYWORD; }
+        "fake_rule" { return FAKE_RULE_KEYWORD; }
+        "methods" { return METHODS_KEYWORD; }
 
         "and" { return AND;}
         "or" { return OR;}
+
+        "private" { return PRIVATE; }
+        "public" { return PUBLIC; }
 
         { LOWERCASE } { IDENTCHAR }  * { return LIDENT; }
 
@@ -70,6 +76,8 @@ IDENTCHAR=[A-Za-z_0-9']
         "-" { return MINUS; }
         "{" { return OPEN_CURLY; }
         "}" { return CLOSE_CURLY; }
+
+        "=" { return EQUALS; }
 
         "/*" { yybegin(IN_COMMENT); commentDepth = 1; tokenStart(); }
 

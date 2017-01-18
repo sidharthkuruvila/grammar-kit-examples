@@ -1,0 +1,8 @@
+/*
+ Will be created for ExamplePublicRuleImpl
+ but no ExamplePrivateRuleImpl exists.
+*/
+private_rule {
+    private first
+    public second
+}

@@ -5,6 +5,10 @@
   psiPackage='kuruvila.example.parser.psi'
   psiImplPackage='kuruvila.example.parser.psi.impl'
 
+  //Allows adding extention methods to Psi classes
+  psiImplUtilClass="kuruvila.example.parser.ExamplePsiImplUtil"
+
+
   elementTypeHolderClass='kuruvila.example.ExampleTypes'
 
   //To avoid a NullPointerExeption
@@ -21,11 +25,19 @@
     CLOSE_CURLY = "}"
     AND = "and"
     OR = "or"
+    EQUALS = "="
+
+    PRIVATE = "private"
+    PUBLIC = "public"
+
     STRING = "string"
     COMMENT = "comment"
     SIMPLE_EXPRESSION_KEYWORD = "simple_expression"
     POOR_RECURSIVE_EXPRESSION_KEYWORD = "poor_recursive_expression"
     RECURSIVE_EXPRESSION_KEYWORD = "recursive_expression"
+    PRIVATE_RULE_KEYWORD = "private_rule"
+    FAKE_RULE_KEYWORD = "fake_rule"
+    METHODS_KEYWORD = "methods"
   ]
 
   /**
@@ -39,10 +51,19 @@
    */
   extends("OrExpression|AddExpression|IdentifierExpression|RecursiveExpression|ConsExpression")=RecursiveExpression
 
+  // Generate getters for tokens. The getter is only created if there is only one instance of
+  // token type in the rule.
+  // generateTokenAccessors=true
+
 }
 
 
-Examples ::= COMMENT? (SimpleExpressionExample |  PoorRecursiveExpressionExample | RecursiveExpressionExample)
+Examples ::= COMMENT? (
+    SimpleExpressionExample
+  | PoorRecursiveExpressionExample
+  | RecursiveExpressionExample
+  | PrivateRuleExample
+  | MethodsExample)
 
 SimpleExpressionExample ::= SIMPLE_EXPRESSION_KEYWORD OPEN_CURLY SimpleExpression CLOSE_CURLY
 
@@ -83,3 +104,40 @@ AddExpression ::=
 
 ConsExpression ::=
     RecursiveExpression COLONCOLON RecursiveExpression { rightAssociative = true }
+
+/**
+ * PrivateRuleExample
+ *
+ * When a rule is tagged private no node will be generated for that rule.
+ */
+
+PrivateRuleExample ::= PRIVATE_RULE_KEYWORD OPEN_CURLY (PrivateRule | PublicRule) +  CLOSE_CURLY
+
+private PrivateRule ::= PRIVATE IdentifierExpression
+
+PublicRule ::= PUBLIC IdentifierExpression
+
+/**
+ * MethodsExample
+ *
+ * The parser generator can add methods to the psi classes.
+ *
+ * GeneratedMethods is an example of generated methods.
+ *
+ * Grammar kit internally generates a method
+ * that returns of a list of children of AssignmentMethod that are Ident, the method lhs is mapped to the first
+ * one and rhs to the second. Rhs unfortunately is nullable.
+ *
+ * Methods in ExamplePsiImplUtil are available as extension methods for the psi class. In
+ * this case hasEquals which returns true if the EQUALS token is present in a psi element.
+ *
+ * TODO Find out if there is away of tagging elements to map to methods instead of using a list
+ * TODO Why is the rhs nullable
+ * TODO Expand on the syntax of the expressions
+ */
+
+MethodsExample ::= METHODS_KEYWORD OPEN_CURLY GeneratedMethods CLOSE_CURLY
+
+GeneratedMethods ::= Ident EQUALS Ident { methods=[ lhs="Ident[0]" rhs="Ident[1]" hasEquals ] }
+
+Ident ::= LIDENT

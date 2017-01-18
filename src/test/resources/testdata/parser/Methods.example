@@ -1,0 +1,6 @@
+/**
+ * Using grammar kit to inject methods into elements
+ */
+methods {
+    a = b
+}
